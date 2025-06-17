@@ -14,14 +14,18 @@ function addGuest(guest){
     const p = document.createElement("p")
     const btn = document.createElement("button")
     const attend= document.createElement("button")
+    const edit=document.createElement("button")
     btn.addEventListener("click", deleteGuest)
-    attend.textContent='attending'
     attend.addEventListener("click",attendingGuest)
-    p.textContent = `${guest}`
+    edit.addEventListener("click",editing)
+    attend.textContent='Attending'
 
-    btn.textContent = 'delete'
+    p.textContent = `${guest}`
+    edit.textContent="Edit"
+    btn.textContent = 'Delete'
     p.appendChild(btn)
     p.appendChild(attend)
+    p.appendChild(edit)
     // document.getElementById('guest_list').appendChild(p)
 
 
@@ -44,10 +48,38 @@ function deleteGuest(e){
     e.target.parentNode.remove()
 }
 function attendingGuest(e){
-    if (e.target.textContent === 'attending') {
-        e.target.textContent = 'notAttending';
+    if (e.target.textContent === 'Attending') {
+        e.target.textContent = 'Not Attending';
+        e.target.style.backgroundColor = 'red';
     } else {
-        e.target.textContent = 'attending';
+        e.target.textContent = 'Attending';
+        e.target.style.backgroundColor = 'green';
     }
 }
+function editing(e){
+    const p = e.target.parentNode;
+    let textNode = null;
+    for (let node of p.childNodes) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            textNode = node;
+            break;
+        }
+    }
+    const currentName = textNode ? textNode.nodeValue.trim() : "";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = currentName;
+    p.insertBefore(input, textNode);
 
+    if (textNode) {
+        p.removeChild(textNode);
+    }
+    input.focus();
+
+    input.addEventListener("blur", () => {
+        const newName = input.value.trim();
+        const newTextNode = document.createTextNode(newName ? newName : currentName);
+        p.insertBefore(newTextNode, input);
+        p.removeChild(input);
+    });
+}
